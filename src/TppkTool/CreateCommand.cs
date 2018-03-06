@@ -47,7 +47,12 @@ namespace TppkTool
                     else
                     {
                         // This is a file (or has wildcards), add all the files that match it
-                        files.AddRange(Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), Path.GetDirectoryName(file)), Path.GetFileName(file)));
+                        var directory = Path.GetDirectoryName(file);
+                        if (directory == string.Empty)
+                        {
+                            directory = Environment.CurrentDirectory;
+                        }
+                        files.AddRange(Directory.EnumerateFiles(directory, Path.GetFileName(file)));
                     }
                 }
 

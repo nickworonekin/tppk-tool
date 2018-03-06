@@ -20,7 +20,7 @@ namespace TppkTool
         public string InputPath { get; set; }
 
         [Option("-o | --output",
-            Description = "The output folder. Defaults to the folder of the TPPK archive.")]
+            Description = "The output folder. Defaults to the current folder.")]
         public string OutputPath { get; set; }
 
         [HelpOption("-? | -h | --help",
@@ -35,7 +35,7 @@ namespace TppkTool
             {
                 if (OutputPath == null)
                 {
-                    OutputPath = Path.GetDirectoryName(Path.GetFullPath(InputPath));
+                    OutputPath = Environment.CurrentDirectory;
                 }
 
                 TppkArchive.Extract(InputPath, OutputPath);

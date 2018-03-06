@@ -44,7 +44,7 @@ The name of the TPPK archive to extract.
 
 **-o** or **--output**
 
-The name of the folder to extract the TPPK archive to. If omitted, it will extract to the folder the archive is in.
+The name of the folder to extract the TPPK archive to. If omitted, the files will be extracted to the current folder.
 
 **-?** or **-h** or **--help**
 
@@ -58,7 +58,7 @@ This app comes with two batch files, create.cmd and extract.cmd, to easily creat
 To use this batch file, drag the DDS files and/or folders containing the DDS files you want to add to the TPPK archive. The batch file will will ask you to name the TPPK archive when creating it.
 
 ### extract.cmd
-To use this batch file, drag the TPPK archive you want to extract. The batch file will ask you for the name of the folder to extract the files to. If left blank, the files will be extracted to the folder the archive is in.
+To use this batch file, drag the TPPK archive you want to extract. The batch file will ask you for the name of the folder to extract the files to. If left blank, the files will be extracted to the current folder.
 
 ## License
 TppkTool is licensed under the [MIT license](LICENSE.md).
