@@ -5,7 +5,7 @@ A command line app for creating and extracting TPPK archives in Puyo Puyo Tetris
 ## Usage
 ### Create
 ```
-tpktool create <output> <files> [options]
+tppktool create <output> <files> [options]
 ```
 
 #### Arguments
@@ -31,7 +31,7 @@ Shows help information for the create command.
 
 ### Extract
 ```
-tpktool extract <input> [options]
+tppktool extract <input> [options]
 ```
 
 #### Arguments
