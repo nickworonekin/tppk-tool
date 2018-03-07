@@ -61,6 +61,15 @@ namespace TppkTool.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This stream has been disposed..
+        /// </summary>
+        internal static string HiddenStreamName {
+            get {
+                return ResourceManager.GetString("HiddenStreamName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a DDS file..
         /// </summary>
         internal static string NotADdsFile {
@@ -84,6 +93,42 @@ namespace TppkTool.Resources {
         internal static string NoTextureId {
             get {
                 return ResourceManager.GetString("NoTextureId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This stream does not support reading..
+        /// </summary>
+        internal static string ReadingNotSupported {
+            get {
+                return ResourceManager.GetString("ReadingNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This stream does not support seeking..
+        /// </summary>
+        internal static string SeekingNotSupported {
+            get {
+                return ResourceManager.GetString("SeekingNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SetLength requires a stream that supports seeking and writing..
+        /// </summary>
+        internal static string SetLengthRequiresSeekingAndWriting {
+            get {
+                return ResourceManager.GetString("SetLengthRequiresSeekingAndWriting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This stream does not support writing..
+        /// </summary>
+        internal static string WritingNotSupported {
+            get {
+                return ResourceManager.GetString("WritingNotSupported", resourceCulture);
             }
         }
     }

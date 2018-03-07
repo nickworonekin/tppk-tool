@@ -126,4 +126,19 @@
   <data name="NoTextureId" xml:space="preserve">
     <value>Could not get the texture id for '{0}'. The texture id is retrieved from the characters after the last underscore in the filename.</value>
   </data>
+  <data name="HiddenStreamName" xml:space="preserve">
+    <value>This stream has been disposed.</value>
+  </data>
+  <data name="ReadingNotSupported" xml:space="preserve">
+    <value>This stream does not support reading.</value>
+  </data>
+  <data name="SeekingNotSupported" xml:space="preserve">
+    <value>This stream does not support seeking.</value>
+  </data>
+  <data name="SetLengthRequiresSeekingAndWriting" xml:space="preserve">
+    <value>SetLength requires a stream that supports seeking and writing.</value>
+  </data>
+  <data name="WritingNotSupported" xml:space="preserve">
+    <value>This stream does not support writing.</value>
+  </data>
 </root>

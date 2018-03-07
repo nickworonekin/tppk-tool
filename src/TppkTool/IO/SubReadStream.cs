@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TppkTool.Resources;
 
 namespace TppkTool.IO
 {
@@ -50,7 +47,7 @@ namespace TppkTool.IO
             {
                 ThrowIfDisposed();
 
-                throw new NotSupportedException(/*SR.SeekingNotSupported*/);
+                throw new NotSupportedException(ErrorMessages.SeekingNotSupported);
             }
         }
 
@@ -63,13 +60,13 @@ namespace TppkTool.IO
         private void ThrowIfDisposed()
         {
             if (_isDisposed)
-                throw new ObjectDisposedException(GetType().ToString()/*, SR.HiddenStreamName*/);
+                throw new ObjectDisposedException(GetType().ToString(), ErrorMessages.HiddenStreamName);
         }
 
         private void ThrowIfCantRead()
         {
             if (!CanRead)
-                throw new NotSupportedException(/*SR.ReadingNotSupported*/);
+                throw new NotSupportedException(ErrorMessages.ReadingNotSupported);
         }
 
         public override int Read(byte[] buffer, int offset, int count)
@@ -97,25 +94,25 @@ namespace TppkTool.IO
         public override long Seek(long offset, SeekOrigin origin)
         {
             ThrowIfDisposed();
-            throw new NotSupportedException(/*SR.SeekingNotSupported*/);
+            throw new NotSupportedException(ErrorMessages.SeekingNotSupported);
         }
 
         public override void SetLength(long value)
         {
             ThrowIfDisposed();
-            throw new NotSupportedException(/*SR.SetLengthRequiresSeekingAndWriting*/);
+            throw new NotSupportedException(ErrorMessages.SetLengthRequiresSeekingAndWriting);
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
             ThrowIfDisposed();
-            throw new NotSupportedException(/*SR.WritingNotSupported*/);
+            throw new NotSupportedException(ErrorMessages.WritingNotSupported);
         }
 
         public override void Flush()
         {
             ThrowIfDisposed();
-            throw new NotSupportedException(/*SR.WritingNotSupported*/);
+            throw new NotSupportedException(ErrorMessages.WritingNotSupported);
         }
 
         // Close the stream for reading.  Note that this does NOT close the superStream (since
