@@ -14,7 +14,5 @@ namespace TppkTool.IO
                     && source.ReadByte() == ' ';
             }
         }
-
-        public static bool IsDirectory(string path) => File.GetAttributes(path).HasFlag(FileAttributes.Directory);
     }
 }

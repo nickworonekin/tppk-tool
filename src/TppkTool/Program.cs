@@ -7,15 +7,12 @@ namespace TppkTool
         ThrowOnUnexpectedArgument = false)]
     [Subcommand("create", typeof(CreateCommand))]
     [Subcommand("extract", typeof(ExtractCommand))]
+    [HelpOption("-? | -h | --help",
+            Description = "Show help information.")]
     class Program
     {
-        [Argument(0, "command",
-            Description = "The command to perform.")]
+        [Argument(0, "command", "The command to perform.")]
         public string Command { get; set; }
-
-        [HelpOption("-? | -h | --help",
-            Description = "Show help information.")]
-        public bool ShowHelp { get; set; }
 
         static void Main(string[] args) => CommandLineApplication.Execute<Program>(args);
 

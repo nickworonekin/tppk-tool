@@ -5,23 +5,19 @@ namespace TppkTool.Formats
 {
     public class TppkArchiveEntry
     {
-        private readonly Stream stream;
-        private readonly int position;
-        private readonly int length;
+        /// <summary>
+        /// Gets or sets the texture ID.
+        /// </summary>
+        public int TextureId { get; set; }
 
-        public int TextureId { get; }
+        /// <summary>
+        /// Gets or sets the offset of the entry within the archive.
+        /// </summary>
+        internal int Offset { get; set; }
 
-        internal TppkArchiveEntry(int textureId, Stream stream, int position, int length)
-        {
-            TextureId = textureId;
-            this.stream = stream;
-            this.position = position;
-            this.length = length;
-        }
-
-        public Stream Open()
-        {
-            return new SubReadStream(stream, position, length);
-        }
+        /// <summary>
+        /// Gets or sets the length of the entry.
+        /// </summary>
+        internal int Length { get; set; }
     }
 }

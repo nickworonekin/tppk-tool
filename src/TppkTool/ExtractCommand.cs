@@ -7,20 +7,16 @@ namespace TppkTool
 {
     [Command("extract",
         Description = "Extracts a TPPK archive.")]
+    [HelpOption("-? | -h | --help",
+            Description = "Show help information.")]
     class ExtractCommand
     {
         [Required]
-        [Argument(0, "input",
-            Description = "The TPPK archive to extract.")]
+        [Argument(0, "input", "The TPPK archive to extract.")]
         public string InputPath { get; set; }
 
-        [Option("-o | --output",
-            Description = "The output folder. Defaults to the current folder.")]
+        [Option("-o | --output", "The output folder. Defaults to the current folder.", CommandOptionType.SingleValue)]
         public string OutputPath { get; set; }
-
-        [HelpOption("-? | -h | --help",
-            Description = "Show help information.")]
-        public bool ShowHelp { get; set; }
 
         private void OnExecute(IConsole console)
         {

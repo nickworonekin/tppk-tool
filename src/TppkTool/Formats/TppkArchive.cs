@@ -13,12 +13,12 @@ namespace TppkTool.Formats
         /// <summary>
         /// Creates a TPPK archive.
         /// </summary>
-        /// <param name="paths">The DDS files to add.</param>
+        /// <param name="inputPaths">The DDS files to add.</param>
         /// <param name="outputPath">The output folder of the TPPK archive.</param>
-        public static void Create(ICollection<string> paths, string outputPath)
+        public static void Create(ICollection<string> inputPaths, string outputPath)
         {
             // Before we start, let's go through all the paths and make sure they are all DDS files
-            foreach (var file in paths)
+            foreach (var file in inputPaths)
             {
                 if (!FileHelper.IsDds(file))
                 {
@@ -26,8 +26,8 @@ namespace TppkTool.Formats
                 }
             }
 
-            using (var destination = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
-            using (var writer = new BinaryWriter(destination))
+            using (var output = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(output))
             {
                 try
                 {
@@ -36,20 +36,20 @@ namespace TppkTool.Formats
                     writer.Write((byte)'p');
                     writer.Write((byte)'k');
                     writer.Write(0);
-                    writer.Write(paths.Count);
+                    writer.Write(inputPaths.Count);
 
-                    var position = (((12 * (paths.Count + 1)) + 63) / 64) * 64;
+                    var position = (((12 * (inputPaths.Count + 1)) + 63) / 64) * 64;
                     var index = 0;
-                    foreach (var path in paths)
+                    foreach (var inputPath in inputPaths)
                     {
                         // Check to see if this file is a DDS file
-                        if (!FileHelper.IsDds(path))
+                        if (!FileHelper.IsDds(inputPath))
                         {
-                            throw new InvalidFileTypeException(string.Format(ErrorMessages.NotADdsFile, Path.GetFileName(path)));
+                            throw new InvalidFileTypeException(string.Format(ErrorMessages.NotADdsFile, Path.GetFileName(inputPath)));
                         }
 
-                        var textureId = GetTextureId(path);
-                        var length = (int)new FileInfo(path).Length;
+                        var textureId = GetTextureId(inputPath);
+                        var length = (int)new FileInfo(inputPath).Length;
 
                         writer.Write(textureId);
                         writer.Write(position - ((index + 1) * 12));
@@ -59,22 +59,22 @@ namespace TppkTool.Formats
                         index++;
                     }
 
-                    foreach (var path in paths)
+                    foreach (var inputPath in inputPaths)
                     {
-                        while (destination.Length % 64 != 0)
+                        while (output.Length % 64 != 0)
                         {
                             writer.Write((byte)0);
                         }
 
-                        using (var source = new FileStream(path, FileMode.Open, FileAccess.Read))
+                        using (var input = new FileStream(inputPath, FileMode.Open, FileAccess.Read))
                         {
-                            source.CopyTo(destination);
+                            input.CopyTo(output);
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    destination.SetLength(0);
+                    output.SetLength(0);
                     throw e;
                 }
             }
@@ -83,19 +83,22 @@ namespace TppkTool.Formats
         /// <summary>
         /// Extracts a TPPK archive.
         /// </summary>
-        /// <param name="path">The TPPK archive.</param>
+        /// <param name="inputPath">The TPPK archive.</param>
         /// <param name="outputPath">The folder to extract the TPPK archive to.</param>
-        public static void Extract(string path, string outputPath)
+        public static void Extract(string inputPath, string outputPath)
         {
-            using (var source = new FileStream(path, FileMode.Open, FileAccess.Read))
-            using (var reader = new BinaryReader(source))
+            using (var input = new FileStream(inputPath, FileMode.Open, FileAccess.Read))
+            using (var reader = new BinaryReader(input))
             {
-                if (!(reader.ReadByte() == 't' && reader.ReadByte() == 'p' && reader.ReadByte() == 'p' && reader.ReadByte() == 'k'))
+                if (!(reader.ReadByte() == 't'
+                    && reader.ReadByte() == 'p'
+                    && reader.ReadByte() == 'p'
+                    && reader.ReadByte() == 'k'))
                 {
-                    throw new InvalidFileTypeException(string.Format(ErrorMessages.NotATppkArchive, Path.GetFileName(path)));
+                    throw new InvalidFileTypeException(string.Format(ErrorMessages.NotATppkArchive, Path.GetFileName(inputPath)));
                 }
 
-                source.Position += 4;
+                input.Position += 4;
                 var entryCount = reader.ReadInt32();
                 var entries = new List<TppkArchiveEntry>(entryCount);
 
@@ -105,7 +108,12 @@ namespace TppkTool.Formats
                     var position = reader.ReadInt32() + (12 * (i + 1));
                     var length = reader.ReadInt32();
 
-                    entries.Add(new TppkArchiveEntry(textureId, source, position, length));
+                    entries.Add(new TppkArchiveEntry
+                    {
+                        TextureId = textureId,
+                        Offset = position,
+                        Length = length,
+                    });
                 }
 
                 if (!Directory.Exists(outputPath))
@@ -117,11 +125,12 @@ namespace TppkTool.Formats
                 var index = 0;
                 foreach (var entry in entries)
                 {
-                    var outputFilename = $"{index.ToString($"D{numOfDigits}")}_{entry.TextureId.ToString("x")}.dds";
+                    var outputFilename = $"{Path.GetFileNameWithoutExtension(inputPath)}_{index.ToString($"D{numOfDigits}")}_{entry.TextureId.ToString("x")}.dds";
 
-                    using (var destination = new FileStream(Path.Combine(outputPath, outputFilename), FileMode.Create, FileAccess.Write))
+                    using (var output = new FileStream(Path.Combine(outputPath, outputFilename), FileMode.Create, FileAccess.Write))
+                    using (var entryStream = new SubReadStream(input, entry.Offset, entry.Length))
                     {
-                        entry.Open().CopyTo(destination);
+                        entryStream.CopyTo(output);
                     }
 
                     index++;

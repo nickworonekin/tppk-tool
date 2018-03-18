@@ -9,20 +9,19 @@ namespace TppkTool
 {
     [Command("create",
         Description = "Creates a TPPK archive.")]
+    [HelpOption("-? | -h | --help",
+            Description = "Show help information.")]
     class CreateCommand
     {
         [Required]
-        [Argument(0, "output",
-            Description = "The filename of the TPPK file to create.")]
+        [Argument(0, "output", "The filename of the TPPK file to create.")]
         public string OutputPath { get; set; }
 
         [Required]
-        [Argument(1, "files",
-            Description = "The files to add. Can contain folders and/or wildcards.")]
-        public List<string> FilePaths { get; set; }
+        [Argument(1, "files", "The files to add. Can contain folders and/or wildcards.")]
+        public List<string> InputPaths { get; set; }
 
-        [HelpOption("-? | -h | --help",
-            Description = "Show help information.")]
+
         public bool ShowHelp { get; set; }
 
         private void OnExecute(IConsole console)
@@ -32,7 +31,7 @@ namespace TppkTool
             try
             {
                 var files = new List<string>();
-                foreach (var file in FilePaths)
+                foreach (var file in InputPaths)
                 {
                     if (Directory.Exists(file))
                     {
