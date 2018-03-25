@@ -1,7 +1,4 @@
-﻿using System.IO;
-using TppkTool.IO;
-
-namespace TppkTool.Formats
+﻿namespace TppkTool.Formats
 {
     public class TppkArchiveEntry
     {
