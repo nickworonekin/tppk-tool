@@ -42,7 +42,7 @@ The name of the TPPK archive to extract.
 
 #### Options
 
-**-o** or **--output**
+**-o &lt;output&gt;** or **--output &lt;output&gt;**
 
 The name of the folder to extract the TPPK archive to. If omitted, the files will be extracted to the current folder.
 
