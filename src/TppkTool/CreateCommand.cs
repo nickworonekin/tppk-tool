@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using TppkTool.Formats;
+using TppkTool.Validation;
 
 namespace TppkTool
 {
@@ -14,17 +15,18 @@ namespace TppkTool
     class CreateCommand
     {
         [Required]
+        [LegalFilePath]
         [Argument(0, "output", "The filename of the TPPK file to create.")]
         public string OutputPath { get; set; }
 
         [Required]
+        [LegalFilePathOrSearchPattern]
         [Argument(1, "files", "The files to add. Can contain folders and/or wildcards.")]
-        public List<string> InputPaths { get; set; }
-
+        public string[] InputPaths { get; set; }
 
         public bool ShowHelp { get; set; }
 
-        private void OnExecute(IConsole console)
+        private int OnExecute(IConsole console)
         {
             var reporter = new ConsoleReporter(console);
 
@@ -51,10 +53,14 @@ namespace TppkTool
                 }
 
                 TppkArchive.Create(files, OutputPath);
+
+                return 0;
             }
             catch (Exception e)
             {
                 reporter.Error(e.Message);
+
+                return e.HResult;
             }
         }
     }

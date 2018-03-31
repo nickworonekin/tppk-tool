@@ -12,13 +12,15 @@ namespace TppkTool
     class ExtractCommand
     {
         [Required]
+        [FileExists]
         [Argument(0, "input", "The TPPK archive to extract.")]
         public string InputPath { get; set; }
 
+        [LegalFilePath]
         [Option("-o | --output", "The output folder. Defaults to the current folder.", CommandOptionType.SingleValue)]
         public string OutputPath { get; set; }
 
-        private void OnExecute(IConsole console)
+        private int OnExecute(IConsole console)
         {
             var reporter = new ConsoleReporter(console);
 
@@ -30,10 +32,14 @@ namespace TppkTool
                 }
 
                 TppkArchive.Extract(InputPath, OutputPath);
+
+                return 0;
             }
             catch (Exception e)
             {
                 reporter.Error(e.Message);
+
+                return e.HResult;
             }
         }
     }

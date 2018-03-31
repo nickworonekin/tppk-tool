@@ -11,10 +11,7 @@ namespace TppkTool
             Description = "Show help information.")]
     class Program
     {
-        [Argument(0, "command", "The command to perform.")]
-        public string Command { get; set; }
-
-        static void Main(string[] args) => CommandLineApplication.Execute<Program>(args);
+        static int Main(string[] args) => CommandLineApplication.Execute<Program>(args);
 
         private void OnExecute(CommandLineApplication app) => app.ShowHelp();
     }

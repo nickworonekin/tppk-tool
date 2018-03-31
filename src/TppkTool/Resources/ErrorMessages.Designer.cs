@@ -70,6 +70,15 @@ namespace TppkTool.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is an invalid file path or search pattern..
+        /// </summary>
+        internal static string InvalidFilePathOrSearchPattern {
+            get {
+                return ResourceManager.GetString("InvalidFilePathOrSearchPattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a DDS file..
         /// </summary>
         internal static string NotADdsFile {

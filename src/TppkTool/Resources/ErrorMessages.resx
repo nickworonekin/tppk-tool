@@ -141,4 +141,7 @@
   <data name="WritingNotSupported" xml:space="preserve">
     <value>This stream does not support writing.</value>
   </data>
+  <data name="InvalidFilePathOrSearchPattern" xml:space="preserve">
+    <value>'{0}' is an invalid file path or search pattern.</value>
+  </data>
 </root>

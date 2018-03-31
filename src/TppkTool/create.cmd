@@ -11,3 +11,10 @@ if [%output%] == [] (
 ) else (
     "%~dp0TppkTool.exe" create "%output%" %*
 )
+
+if %errorlevel% neq 0 goto :error
+
+goto :eof
+
+:error
+pause
