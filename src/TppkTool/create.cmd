@@ -3,7 +3,7 @@
 if "%~1" == "" goto :eof
 
 :enteroutput
-set /p output=Name of the TPPK archive to create: 
+set /p output=Name of the TPPK archive to create, including extension: 
 
 if "%output%" == "" (
     echo Name cannot be blank.
