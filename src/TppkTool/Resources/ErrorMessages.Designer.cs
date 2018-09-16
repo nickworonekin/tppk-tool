@@ -88,6 +88,15 @@ namespace TppkTool.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is not a NARC file..
+        /// </summary>
+        internal static string NotANarcFile {
+            get {
+                return ResourceManager.GetString("NotANarcFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a TPPK archive..
         /// </summary>
         internal static string NotATppkArchive {
@@ -102,6 +111,15 @@ namespace TppkTool.Resources {
         internal static string NoTextureId {
             get {
                 return ResourceManager.GetString("NoTextureId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; does not contain a TPPK archive..
+        /// </summary>
+        internal static string NoTppkArchiveInFile {
+            get {
+                return ResourceManager.GetString("NoTppkArchiveInFile", resourceCulture);
             }
         }
         

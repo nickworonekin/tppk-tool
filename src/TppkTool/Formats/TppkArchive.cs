@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using TppkTool.Exceptions;
 using TppkTool.IO;
 using TppkTool.Resources;
@@ -27,55 +28,61 @@ namespace TppkTool.Formats
             }
 
             using (var output = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
-            using (var writer = new BinaryWriter(output))
             {
                 try
                 {
-                    writer.Write((byte)'t');
-                    writer.Write((byte)'p');
-                    writer.Write((byte)'p');
-                    writer.Write((byte)'k');
-                    writer.Write(0);
-                    writer.Write(inputPaths.Count);
-
-                    var position = (((12 * (inputPaths.Count + 1)) + 63) / 64) * 64;
-                    var index = 0;
-                    foreach (var inputPath in inputPaths)
-                    {
-                        // Check to see if this file is a DDS file
-                        if (!FileHelper.IsDds(inputPath))
-                        {
-                            throw new InvalidFileTypeException(string.Format(ErrorMessages.NotADdsFile, Path.GetFileName(inputPath)));
-                        }
-
-                        var textureId = GetTextureId(inputPath);
-                        var length = (int)new FileInfo(inputPath).Length;
-
-                        writer.Write(textureId);
-                        writer.Write(position - ((index + 1) * 12));
-                        writer.Write(length);
-
-                        position += ((length + 63) / 64) * 64;
-                        index++;
-                    }
-
-                    foreach (var inputPath in inputPaths)
-                    {
-                        while (output.Length % 64 != 0)
-                        {
-                            writer.Write((byte)0);
-                        }
-
-                        using (var input = new FileStream(inputPath, FileMode.Open, FileAccess.Read))
-                        {
-                            input.CopyTo(output);
-                        }
-                    }
+                    Create(inputPaths, output);
                 }
                 catch (Exception e)
                 {
                     output.SetLength(0);
                     throw e;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a TPPK archive.
+        /// </summary>
+        /// <param name="inputPaths">The DDS files to add.</param>
+        /// <param name="output">The output stream of the TPPK archive.</param>
+        public static void Create(ICollection<string> inputPaths, Stream output)
+        {
+            using (var writer = new BinaryWriter(output, Encoding.UTF8, true))
+            {
+                writer.Write((byte)'t');
+                writer.Write((byte)'p');
+                writer.Write((byte)'p');
+                writer.Write((byte)'k');
+                writer.Write(0);
+                writer.Write(inputPaths.Count);
+
+                var position = (((12 * (inputPaths.Count + 1)) + 63) / 64) * 64;
+                var index = 0;
+                foreach (var inputPath in inputPaths)
+                {
+                    var textureId = GetTextureId(inputPath);
+                    var length = (int)new FileInfo(inputPath).Length;
+
+                    writer.Write(textureId);
+                    writer.Write(position - ((index + 1) * 12));
+                    writer.Write(length);
+
+                    position += ((length + 63) / 64) * 64;
+                    index++;
+                }
+
+                foreach (var inputPath in inputPaths)
+                {
+                    while (output.Length % 64 != 0)
+                    {
+                        writer.Write((byte)0);
+                    }
+
+                    using (var input = new FileStream(inputPath, FileMode.Open, FileAccess.Read))
+                    {
+                        input.CopyTo(output);
+                    }
                 }
             }
         }
@@ -88,14 +95,34 @@ namespace TppkTool.Formats
         public static void Extract(string inputPath, string outputPath)
         {
             using (var input = new FileStream(inputPath, FileMode.Open, FileAccess.Read))
-            using (var reader = new BinaryReader(input))
+            {
+                try
+                {
+                    Extract(input, outputPath, $"{Path.GetFileNameWithoutExtension(inputPath)}_");
+                }
+                catch (InvalidFileTypeException e)
+                {
+                    throw new InvalidFileTypeException(string.Format(ErrorMessages.NotATppkArchive, Path.GetFileName(inputPath)), e);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Extracts a TPPK archive.
+        /// </summary>
+        /// <param name="input">The TPPK archive.</param>
+        /// <param name="outputPath">The folder to extract the TPPK archive to.</param>
+        /// <param name="outputPrefix">The prefix to use for the extracted files.</param>
+        public static void Extract(Stream input, string outputPath, string outputPrefix)
+        {
+            using (var reader = new BinaryReader(input, Encoding.UTF8, true))
             {
                 if (!(reader.ReadByte() == 't'
                     && reader.ReadByte() == 'p'
                     && reader.ReadByte() == 'p'
                     && reader.ReadByte() == 'k'))
                 {
-                    throw new InvalidFileTypeException(string.Format(ErrorMessages.NotATppkArchive, Path.GetFileName(inputPath)));
+                    throw new InvalidFileTypeException();
                 }
 
                 input.Position += 4;
@@ -125,7 +152,7 @@ namespace TppkTool.Formats
                 var index = 0;
                 foreach (var entry in entries)
                 {
-                    var outputFilename = $"{Path.GetFileNameWithoutExtension(inputPath)}_{index.ToString($"D{numOfDigits}")}_{entry.TextureId.ToString("x")}.dds";
+                    var outputFilename = $"{outputPrefix}{index.ToString($"D{numOfDigits}")}_{entry.TextureId.ToString("x")}.dds";
 
                     using (var output = new FileStream(Path.Combine(outputPath, outputFilename), FileMode.Create, FileAccess.Write))
                     using (var entryStream = new SubReadStream(input, entry.Offset, entry.Length))

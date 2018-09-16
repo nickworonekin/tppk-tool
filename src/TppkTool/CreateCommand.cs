@@ -4,19 +4,20 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using TppkTool.Formats;
+using TppkTool.IO;
 using TppkTool.Validation;
 
 namespace TppkTool
 {
     [Command("create",
-        Description = "Creates a TPPK archive.")]
+        Description = "Creates a TPPK archive, optionally updating an existing one in a NARC archive.")]
     [HelpOption("-? | -h | --help",
             Description = "Show help information.")]
     class CreateCommand
     {
         [Required]
         [LegalFilePath]
-        [Argument(0, "output", "The filename of the TPPK file to create.")]
+        [Argument(0, "output", "The filename of the TPPK file to create, or the filename of the NARC archive containing the TPPK archive to update.")]
         public string OutputPath { get; set; }
 
         [Required]
@@ -52,7 +53,14 @@ namespace TppkTool
                     }
                 }
 
-                TppkArchive.Create(files, OutputPath);
+                if (File.Exists(OutputPath) && FileHelper.IsNarc(OutputPath))
+                {
+                    NarcArchive.UpdateTppk(files, OutputPath);
+                }
+                else
+                {
+                    TppkArchive.Create(files, OutputPath);
+                }
 
                 return 0;
             }

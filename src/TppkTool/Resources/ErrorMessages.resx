@@ -144,4 +144,10 @@
   <data name="InvalidFilePathOrSearchPattern" xml:space="preserve">
     <value>'{0}' is an invalid file path or search pattern.</value>
   </data>
+  <data name="NotANarcFile" xml:space="preserve">
+    <value>'{0}' is not a NARC file.</value>
+  </data>
+  <data name="NoTppkArchiveInFile" xml:space="preserve">
+    <value>'{0}' does not contain a TPPK archive.</value>
+  </data>
 </root>

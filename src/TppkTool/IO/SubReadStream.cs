@@ -13,6 +13,7 @@ namespace TppkTool.IO
         private readonly long _endInSuperStream;
         private readonly Stream _superStream;
         private bool _canRead;
+        private bool _canSeek;
         private bool _isDisposed;
 
         public SubReadStream(Stream superStream, long startPosition, long maxLength)
@@ -22,6 +23,7 @@ namespace TppkTool.IO
             _endInSuperStream = startPosition + maxLength;
             _superStream = superStream;
             _canRead = true;
+            _canSeek = true;
             _isDisposed = false;
         }
 
@@ -47,13 +49,24 @@ namespace TppkTool.IO
             {
                 ThrowIfDisposed();
 
-                throw new NotSupportedException(ErrorMessages.SeekingNotSupported);
+                if (!CanSeek)
+                {
+                    throw new NotSupportedException(ErrorMessages.SeekingNotSupported);
+                }
+
+                if (value < 0 || value > Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value));
+                }
+
+                _positionInSuperStream = _startInSuperStream + value;
+                _superStream.Seek(_positionInSuperStream, SeekOrigin.Begin);
             }
         }
 
         public override bool CanRead => _superStream.CanRead && _canRead;
 
-        public override bool CanSeek => false;
+        public override bool CanSeek => _superStream.CanSeek && _canSeek;
 
         public override bool CanWrite => false;
 
@@ -94,7 +107,48 @@ namespace TppkTool.IO
         public override long Seek(long offset, SeekOrigin origin)
         {
             ThrowIfDisposed();
-            throw new NotSupportedException(ErrorMessages.SeekingNotSupported);
+            if (!CanSeek)
+            {
+                throw new NotSupportedException(ErrorMessages.SeekingNotSupported);
+            }
+
+            switch (origin)
+            {
+                case SeekOrigin.Begin:
+                    if (offset < 0 || offset > Length)
+                    {
+                        throw new IOException();
+                    }
+
+                    _positionInSuperStream = _startInSuperStream + offset;
+                    _superStream.Seek(_positionInSuperStream, SeekOrigin.Begin);
+                    break;
+
+                case SeekOrigin.Current:
+                    if (Position + offset < 0 || Position + offset > Length)
+                    {
+                        throw new IOException();
+                    }
+
+                    _positionInSuperStream += offset;
+                    _superStream.Seek(_positionInSuperStream, SeekOrigin.Begin);
+                    break;
+
+                case SeekOrigin.End:
+                    if (offset < -Length || offset > 0)
+                    {
+                        throw new IOException();
+                    }
+
+                    _positionInSuperStream = _endInSuperStream + offset;
+                    _superStream.Seek(_positionInSuperStream, SeekOrigin.Begin);
+                    break;
+
+                default:
+                    throw new ArgumentException(nameof(origin));
+            }
+
+            return Position;
         }
 
         public override void SetLength(long value)
@@ -122,6 +176,7 @@ namespace TppkTool.IO
             if (disposing && !_isDisposed)
             {
                 _canRead = false;
+                _canSeek = false;
                 _isDisposed = true;
             }
             base.Dispose(disposing);

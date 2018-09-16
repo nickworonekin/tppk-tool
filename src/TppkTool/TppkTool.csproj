@@ -5,7 +5,7 @@
     <TargetFramework>net45</TargetFramework>
     <Description>Creates and extracts TPPK archives for Puyo Puyo Tetris PC.</Description>
     <Copyright>Copyright © Nick Woronekin 2018</Copyright>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
