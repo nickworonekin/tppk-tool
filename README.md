@@ -12,7 +12,7 @@ tppktool create <output> <files> [options]
 
 **output**
 
-The name of the TPPK archive to create.
+The name of the TPPK archive to create, or the name of the NARC archive containing the TPPK archive to update.
 
 **files**
 
@@ -38,7 +38,7 @@ tppktool extract <input> [options]
 
 **input**
 
-The name of the TPPK archive to extract.
+The name of the TPPK archive to extract, or the name of the NARC archive containing the TPPK archive to extract.
 
 #### Options
 
@@ -55,10 +55,10 @@ Shows help information for the extract command.
 This app comes with two batch files, create.cmd and extract.cmd, to easily create and extract TPPK archives.
 
 ### create.cmd
-To use this batch file, drag the DDS files and/or folders containing the DDS files you want to add to the TPPK archive. The batch file will will ask you to name the TPPK archive when creating it.
+To use this batch file, drag the DDS files and/or folders containing the DDS files you want to add to the TPPK archive. The batch file will will ask you to name the TPPK archive when creating it. If you are updating a NARC archive, enter the name of it instead when prompted.
 
 ### extract.cmd
-To use this batch file, drag the TPPK archive you want to extract. The batch file will ask you for the name of the folder to extract the files to. If left blank, the files will be extracted to the current folder.
+To use this batch file, drag the TPPK archive you want to extract, or the NARC archive containing the TPPK archive you want to extract. The batch file will ask you for the name of the folder to extract the files to. If left blank, the files will be extracted to the current folder.
 
 ## License
 TppkTool is licensed under the [MIT license](LICENSE.md).
